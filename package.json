@@ -1,7 +1,7 @@
 {
   "name": "node-heap",
   "version": "0.0.1",
-  "description": "Build and use a heap data structure in node",
+  "description": "Heap data structures",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -21,7 +21,8 @@
     "url": "https://github.com/jayrbolton/node-heap.git"
   },
   "scripts": {
-    "test": "dependency-check package.json && standard && node test/",
+    "test": "npm run lint && node test/",
+    "lint": "dependency-check package.json && standard",
     "preversion": "npm run test",
     "postversion": "git push && git push --tags"
   },

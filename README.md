@@ -1,8 +1,12 @@
 # node-heap
 
-> Build and use a heap data structure in node
+> Heap data structures for node & javascript
 
-background details relevant to understanding what this module does
+Heaps are useful for heap sort, priority queues, and other basic things.
+
+This gives a module both for a max-heap and a min-heap
+
+Docs are WIP
 
 ## Usage
 
