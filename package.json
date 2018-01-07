@@ -1,5 +1,5 @@
 {
-  "name": "node-heap",
+  "name": "@jayrbolton/heap",
   "version": "0.0.1",
   "description": "Heap data structures",
   "main": "index.js",
