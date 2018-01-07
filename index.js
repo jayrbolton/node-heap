@@ -1,24 +1,26 @@
 /* Create a new heap from an unordered array
- * You can pass in custom compare and key functions
- * The compare function should take (x, y) and return 1, 0, or -1 if it's >, ===, or <
- * The key function should take a val in the array and return the key for that elem
- * O(n log n)
- * (arr, func, func) -> heap
  */
-function Heap (arr, compare, key) {
-  if (!(this instanceof Heap)) return new Heap(arr)
+function Heap (arr, config) {
+  if (!(this instanceof Heap)) return new Heap(arr, config)
+  if (config === undefined) config = {}
   if (arr === undefined) arr = []
-  if (compare === undefined) compare = defaultComparison
-  if (key === undefined) key = defaultKey
-  this.compare = compare
-  this.key = key
+  if (config.compare === undefined) config.compare = defaultComparison
+  if (config.key === undefined) config.key = defaultKey
+  if (config.type === undefined) config.type = 'max'
+  this.compare = config.compare
+  this.key = config.key
   this.arr = arr
+  if (config.type === 'min') {
+    // Invert the compare func
+    var prevCompare = this.compare
+    this.compare = function (x, y) {
+      return prevCompare(x, y) * -1
+    }
+  }
   return heapify(this)
 }
 
 /* Default comparison function is num compare
- * O(1)
- * (x, y) -> num
  */
 function defaultComparison (x, y) {
   if (x === y) return 0
@@ -95,20 +97,24 @@ Heap.prototype.siftDown = function (i) { return siftUp(i, this) }
 function siftDown (idx, heap) {
   var comp = heap.compare
   var key = heap.key
-  while (ileft(idx) < heap.size()) {
+  var limit = heap.size()
+  while (ileft(idx) < limit) {
     var idxLeft = ileft(idx)
-    var idxRight = iright(idx)
+    var max = idx
     var valLeft = key(heap.arr[idxLeft])
-    var valRight = key(heap.arr[idxRight])
     var valParent = key(heap.arr[idx])
-    var max = idx // which child idx to swap with
-    if (valRight !== undefined && comp(valParent, valRight) === -1 && comp(valRight, valLeft) === 1) {
-      max = idxRight
-    } else if (comp(valParent, valLeft) === -1) {
+    if (comp(valParent, valLeft) === -1) {
       max = idxLeft
     }
+    var idxRight = iright(idx)
+    if (idxRight < limit) {
+      var valRight = key(heap.arr[idxRight])
+      if (comp(valParent, valRight) === -1 && comp(valRight, valLeft) === 1) {
+        max = idxRight
+      }
+    }
     if (max === idx) {
-      // the root is greater than both children; we are done
+      // the root greater than both children; we are done
       return heap
     } else {
       swap(heap.arr, idx, max)
@@ -130,7 +136,6 @@ function merge (heap1, heap2) {
 }
 
 /* Pop the root val from the heap
- * O(n log n)
  * (heap(a)) -> a
  */
 Heap.prototype.pop = function () { return pop(this) }
@@ -141,7 +146,6 @@ function pop (heap) {
 }
 
 /* Replace the root val on the heap
- * O(log n)
  * (heap(a)) -> a
  */
 Heap.prototype.replace = function (val) { return replace(val, this) }
